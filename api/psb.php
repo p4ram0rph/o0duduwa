@@ -73,10 +73,4 @@ class psb{
 
 }
 
-/**
-$a = new psb();
-$a->daily();
-var_dump($a->mail('poop@gmail.com'));
-$a->domain('fbi.gov');
 
-**/

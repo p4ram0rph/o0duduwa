@@ -22,4 +22,4 @@ spl_autoload_register(function ($class){
 });
 
 
-$irc = new irc('localhost',6697,'o0duduwa',str_repeat('Ass ',4),1);
+$irc = new irc('localhost',6697,'o0duduwa',str_repeat('Test ',4),1);

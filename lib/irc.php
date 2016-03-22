@@ -135,6 +135,5 @@ class irc{
 
 }
 
-//$test = new irc('test',str_repeat("poop ", 4));
 
 ?>
