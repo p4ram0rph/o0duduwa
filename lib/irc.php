@@ -7,7 +7,7 @@ class irc{
 	public $nick 	= '';
 	public $user  	= '';
 	public $rfeed 	= 0;
-	public $channel = '#ism';
+	public $channel = '#test';
 
 	public function __construct($host,$port,$nick,$user,$ssl = 0){
 		$this->host = $host;
@@ -93,6 +93,11 @@ class irc{
 							else{	$this->rfeed = 1; $this->privmsg($data[2],'Rss turned on');}
 					//default do nothing
 					default:
+						if(substr($data[3],0,2) == ':|' && !empty($class = str_ireplace(':|', '', $data[3]))){
+							$ret = (class_exists($class))? (new $class(array_slice( $data, 4)))->run():"$class Doesn't Exist maggot" ;
+							$this->privmsg($data[2],implode(' ',$ret));
+							//var_dump($ret);
+						}
 						break;
 				}
 			}
@@ -136,4 +141,4 @@ class irc{
 }
 
 
-?>
+
