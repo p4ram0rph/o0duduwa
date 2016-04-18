@@ -60,54 +60,77 @@ class irc{
 				$this->pong($data[1]);
 
 			}else{
-				//if not a ping
-				switch ($data[3]) {
-					//check if the 4th value of the array $data is :!say
-					case ':!say':
-							//send to the chan the 5 value
-							$this->privmsg($data[2],$data[4]);
-						break;
-					case ':!leaklookup':
+				try{
+					//if not a ping
+					switch ($data[3]) {
+						//check if the 4th value of the array $data is :!say
+						case ':!say':
+								//send to the chan the 5 value
+								$this->privmsg($data[2],$data[4]);
+							break;
+						case ':!leaklookup':
 
 							foreach($this->psb->mail(trim(preg_replace('/\s+/', ' ', $data[4]))) as $paste){
 								$this->privmsg($data[2],$paste);
 								sleep(1);
 							}
-						break;
-					case ':!dailydump':
+							break;
+						case ':!dailydump':
 
 							foreach($this->psb->daily() as $paste){
 								$this->privmsg($data[2],$paste);
 								sleep(1);
 							}
-						break;
-					case ':!domainlookup':
-							foreach($this->psb->domain(trim(preg_replace('/\s+/', ' ', $data[4]))) as $paste){
+							break;
+						case ':!domainlookup':
+							foreach( $this->psb->domain( trim(preg_replace('/\s+/', ' ', $data[4] ) ) ) as $paste){
 								$this->privmsg($data[2],$paste);
 								sleep(1);
 
 							}
-						break;
-					case ':!rss':
-							if($this->rfeed == 1){ $this->rfeed = 0; $this->privmsg($data[2],'Rss turned off');}
-							else{	$this->rfeed = 1; $this->privmsg($data[2],'Rss turned on');}
-					//default do nothing
-					default:
-						if(substr($data[3],0,2) == ':|' && !empty($class = str_ireplace(':|', '', $data[3]))){
-							$ret = (class_exists($class))? (new $class(array_slice( $data, 4)))->run():"$class Doesn't Exist maggot" ;
-							$this->privmsg($data[2],implode(' ',$ret));
-							//var_dump($ret);
+							break;
+						case ':!rss':
+							if($this->rfeed == 1){
+
+								$this->rfeed = 0; $this->privmsg($data[2],'Rss turned off');}
+
+							else{
+
+								$this->rfeed = 1; $this->privmsg($data[2],'Rss turned on');
+
+							}
+
+						default:
+							//so ugly
+							if(substr($data[3],0,2) == ':|' and !empty($class = rtrim(str_ireplace(':|', '', $data[3] ) ) ) ){
+
+								$ret = (class_exists($class)) ? 
+								(new $class(array_slice( $data, 4)))->run():
+								"$class Doesn't Exist maggot" ;
+								$this->privmsg( $data[2], (is_array($ret)) ? implode(' ',$ret) : $ret  );
+
+							}
+
+							break;
+
+
 						}
-						break;
-				}
+
+
+					}catch(Exception $e){
+
+						print "Alert motherfucker";
+
+				} 
+
 			}
 
-
 		}
+
 	}
 
 	private function pong($data){
-		//respond to pings
+	//respond to pings
 		fputs($this->sock,"PONG $data\r\n");
 	}
 
@@ -135,7 +158,9 @@ class irc{
 	}
 	//join chan
 	public function join($c){
+
 		fputs($this->sock,"JOIN $c \r\n");
+
 	}
 
 }
